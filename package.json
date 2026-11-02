@@ -1,0 +1,24 @@
+{
+  "name": "ad-perf-aggregator",
+  "version": "1.0.0",
+  "description": "CLI tool to aggregate ad performance metrics from a 1GB CSV file using DuckDB",
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "agg": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && chmod +x dist/cli.js",
+    "start": "node src/cli.ts"
+  },
+  "dependencies": {
+    "@duckdb/node-api": "^2.0.0-r.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}
