@@ -70,6 +70,11 @@ use DuckDB at version ^2.0.0-r.1
 docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: exec: "agg": executable file not found in $PATH
 ```
 
+### Prompt 8
+```text
+Add tests for cases like missing files, malformed rows, etc.
+```
+
 ## What Was Modified or Verified Manually
 
 - Directed the architecture change from custom Node.js Buffer stream parsing to querying the CSV file directly with **DuckDB** (`@duckdb/node-api`).

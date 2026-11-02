@@ -83,3 +83,11 @@ Measured on `data/ad_data.csv` (`995 MB`, 50 unique campaigns):
 
 - [`results/top10_ctr.csv`](./results/top10_ctr.csv): Top 10 campaigns with the highest Click-Through Rate ($\text{CTR} = \frac{\text{total\_clicks}}{\text{total\_impressions}}$).
 - [`results/top10_cpa.csv`](./results/top10_cpa.csv): Top 10 campaigns with the lowest Cost Per Acquisition ($\text{CPA} = \frac{\text{total\_spend}}{\text{total\_conversions}}$), excluding campaigns with zero conversions.
+
+## Running Tests
+
+Run the unit test suite (covering missing files, directory paths, empty files, header-only CSVs, malformed rows, zero conversions/impressions, and top-10 ranking):
+
+```bash
+npm test
+```

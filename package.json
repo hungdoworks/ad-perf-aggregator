@@ -12,7 +12,8 @@
   ],
   "scripts": {
     "build": "tsc && chmod +x dist/cli.js",
-    "start": "node src/cli.ts"
+    "start": "node src/cli.ts",
+    "test": "node --test test/*.test.ts"
   },
   "dependencies": {
     "@duckdb/node-api": "^2.0.0-r.1"

@@ -34,6 +34,14 @@ export async function aggregateAdPerformance(
       throw new Error(`Input file not found: ${resolvedInput}`);
     }
 
+    const stat = fs.statSync(resolvedInput);
+    if (!stat.isFile()) {
+      throw new Error(`Input path is not a file: ${resolvedInput}`);
+    }
+    if (stat.size === 0) {
+      throw new Error(`Input file is empty: ${resolvedInput}`);
+    }
+
     const resolvedOutputDir = path.resolve(outputDir);
     fs.mkdirSync(resolvedOutputDir, { recursive: true });
 
@@ -48,6 +56,7 @@ export async function aggregateAdPerformance(
     const escapedCpaOut = escapeSqlString(cpaOutputPath);
 
     // 1. Aggregate CSV data by campaign_id in a single streaming pass
+    // ignore_errors = true skips malformed rows (invalid types / column counts)
     await connection.run(`
       CREATE TEMP TABLE campaign_metrics AS
       SELECT
@@ -64,14 +73,24 @@ export async function aggregateAdPerformance(
           WHEN SUM(conversions) > 0 THEN SUM(spend)::DOUBLE / SUM(conversions)::DOUBLE
           ELSE NULL
         END AS cpa
-      FROM read_csv('${escapedInput}', header = true, columns = {
-        'campaign_id': 'VARCHAR',
-        'date': 'VARCHAR',
-        'impressions': 'BIGINT',
-        'clicks': 'BIGINT',
-        'spend': 'DOUBLE',
-        'conversions': 'BIGINT'
-      })
+      FROM read_csv('${escapedInput}',
+        header = true,
+        ignore_errors = true,
+        columns = {
+          'campaign_id': 'VARCHAR',
+          'date': 'VARCHAR',
+          'impressions': 'BIGINT',
+          'clicks': 'BIGINT',
+          'spend': 'DOUBLE',
+          'conversions': 'BIGINT'
+        }
+      )
+      WHERE campaign_id IS NOT NULL
+        AND TRIM(campaign_id) <> ''
+        AND impressions IS NOT NULL AND impressions >= 0
+        AND clicks IS NOT NULL AND clicks >= 0
+        AND spend IS NOT NULL AND spend >= 0
+        AND conversions IS NOT NULL AND conversions >= 0
       GROUP BY campaign_id;
     `);
 
